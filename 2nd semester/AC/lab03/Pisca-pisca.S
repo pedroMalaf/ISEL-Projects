@@ -8,7 +8,11 @@
 ;
 	.equ	STACK_SIZE, 64                ; Dimensao do stack - 32 B
 	.equ	INPORT_ADDRESS, 0xFF00       ; Endereço do porto de entrada
-	.equ	OUTPORT_ADDRESS, 0xFF00       ; Endereço do porto de saída
+	.equ	OUTPORT_ADDRESS, 0xFF00       ; Endereço do porto de saída~
+    .equ    I7_MASK, 0x80                  ; Mascara do switch I7
+    .equ    TIME_MASK, 0x07                ; Mascara do switch I0..I2~
+    .equ    ON_LED, 0x81                  ; Valor do porto saída na execução
+
 
 ; Seccao:    .startup
 ; Descricao: Guarda o código de arranque do sistema
@@ -31,19 +35,50 @@ main_addr:
 	.text
 
 ; Rotina:    main
-; Descricao: Ao iniciar pisca os leds do porto de saida, de seguida fica num loop em que 
+; Descricao: pisca-pisca
 ; Entradas:  -
 ; Saidas:    -
 ; Efeitos:   
 main:
-	mov	r0, #0xFF
-	bl	outport_write
-	mov	r0, #0x00
-	bl	outport_write
-loop:
-	bl	inport_read
-	bl	outport_write
-	b	loop
+    mov r0, I7_MASK
+    bl outport_write
+check_on:
+    bl inport_read
+    mov r1, I7_MASK
+    and r2, r0, r1
+    cmp r1, r2
+    bne check_on
+on:
+    mov r1, TIME_MASK
+    and r2, r0, r1
+    mov r0, r2
+    bl multiply
+    mov r2, r0
+    mov r0, ON_LED
+    bl outport_write
+    mov r0, r2
+    bl sleep
+    mov r0, I7_MASK
+    bl outport_write
+    mov r0, r2
+    bl sleep
+    b check_on
+
+
+; Rotina:    main
+; Descricao: pisca-pisca
+; Entradas:  r0 = n
+; Saidas:    r0 = n*5
+; Efeitos:  (r0+1)*5
+multiply:
+	mov r1, #0
+	add r0, r0, #1
+loop_multiply:
+	add r1, r1, #5
+	sub r0, r0, #1 
+	bne	loop_multiply
+    mov r0, r1
+	mov pc, lr	
 
 ; Rotina:    inport_read
 ; Descricao: Lê o valor que está no porto de entrada

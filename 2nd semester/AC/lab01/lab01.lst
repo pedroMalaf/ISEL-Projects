@@ -1,4 +1,4 @@
-P16 assembler v1.3.2 (May  7 2020)	lab01.lst	Fri Mar 25 09:33:46 2022
+P16 assembler v1.3.2 (May  7 2020)	lab01.lst	Mon Sep 26 10:20:56 2022
 
 Sections
 Index   Name            Addresses       Size
@@ -8,7 +8,7 @@ Symbols
 Name                    Type      Value      Section
 if                      LABEL     0002 2     .text
 if_end                  LABEL     0014 20    .text
-line#30                 LABEL     0014 20    .text
+line#29                 LABEL     0014 20    .text
 while                   LABEL     0008 8     .text
 while_end               LABEL     0014 20    .text
 
@@ -16,30 +16,29 @@ Code listing
    1           	; -----------------------------------------------------------------------------
    2           	; Ficheiro:  lab01.S
    3           	; Descricao: Codigo de suporte a realizacao da 1a atividade laboratorial de AC.
-   4           	; Autores:	 - Tiago M Dias (tiago.dias@isel.pt)
-   5           	;			 - Carolina Pereira (A49470@alunos.isel.pt)
-   6           	;			 - Pedro Malafaia (A49506@alunos.isel.pt)
-   7           	;			 - Roberto Petrisoru (A49418@alunos.isel.pt)
-   8           	; Data:		 17-03-2022
-   9           	; -----------------------------------------------------------------------------
-  10           	
-  11           		; r0 guarda o valor da variavel M
-  12           		; r1 guarda o valor da variavel m
-  13           		; r2 guarda o valor da variavel p
-  14           		; r3 e utilizado para guardar valores temporariamente
-  15           	
-  16 0000 02 60		mov	r2, #0
-  17           	if:
-  18 0002 03 60		mov r3, #0
-  19 0004 80 B9		cmp r0, r3
-  20 0006 06 40		beq if_end
-  21           	while:
-  22 0008 03 60		mov	r3, #0
-  23 000A B0 B8		cmp	r3, r1
-  24 000C 03 4C		bhs	while_end
-  25 000E 22 80		add	r2, r2, r0
-  26 0010 91 A8		sub	r1, r1, #1
-  27 0012 FA 5B		b	while
-  28           	while_end:
-  29           	if_end:
-  30 0014 FF 5B		b	.
+   4           	; Autores:		Tiago M Dias (tiago.dias@isel.pt)
+   5           	;				Pedro Malafaia (A49506@alunos.isel.pt)
+   6           	;				Roberto Petrisoru (A49418@alunos.isel.pt)
+   7           	; Data:      11-03-2022
+   8           	; -----------------------------------------------------------------------------
+   9           	
+  10           		; r0 guarda o valor da variavel M
+  11           		; r1 guarda o valor da variavel m
+  12           		; r2 guarda o valor da variavel p
+  13           		; r3 e utilizado para guardar valores temporariamente
+  14           	
+  15 0000 02 60		mov	r2, #0
+  16           	if:
+  17 0002 03 60		mov r3, #0
+  18 0004 80 B9		cmp r0, r3
+  19 0006 06 40		beq if_end
+  20           	while:
+  21 0008 03 60		mov	r3, #0
+  22 000A B0 B8		cmp	r3, r1
+  23 000C 03 4C		bhs	while_end
+  24 000E 22 80		add	r2, r2, r0
+  25 0010 91 A8		sub	r1, r1, #1
+  26 0012 FA 5B		b	while
+  27           	while_end:
+  28           	if_end:
+  29 0014 FF 5B		b	.

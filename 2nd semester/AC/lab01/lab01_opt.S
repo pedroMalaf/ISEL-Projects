@@ -1,11 +1,10 @@
 ; -----------------------------------------------------------------------------
 ; Ficheiro:  lab01.S
-; Descricao: Codigo da 1a atividade de laboratorio optimizado
-; Autores:	 - Tiago M Dias (tiago.dias@isel.pt)
-;			 - Carolina Pereira (A49470@alunos.isel.pt)
-;			 - Pedro Malafaia (A49506@alunos.isel.pt)
-;			 - Roberto Petrisoru (A49418@alunos.isel.pt)
-; Data:		 17-03-2022
+; Descricao: Codigo de suporte a realizacao da 1a atividade laboratorial de AC.
+; Autores:		Tiago M Dias (tiago.dias@isel.pt)
+;				Pedro Malafaia (A49506@alunos.isel.pt)
+;				Roberto Petrisoru (A49418@alunos.isel.pt)
+; Data:      11-03-2022
 ; -----------------------------------------------------------------------------
 
 	; r0 guarda o valor da variavel M
@@ -14,13 +13,11 @@
 	; r3 e utilizado para guardar valores temporariamente
 
 	mov	r2, #0
-
     cmp r0, r1
     bhs if
-    mov r3, r0
+    mov r3, r0      ;dá para fazer a troca de variáveis, sem recorrer a uma terceira, recorrendo ao xor 
     mov r0, r1
     mov r1, r3
-
 if:
 	mov r3, #0
 	cmp r0, r3
