@@ -1,6 +1,3 @@
-; Ficheiro:  lab05.S
-; Data:      27-05-2022
-
 ; Definicao dos valores dos simbolos utilizados no programa
 ;
 	.equ	CPSR_BIT_I, 0b010000          ; Mascara para o bit I do registo CPSR
@@ -16,7 +13,7 @@
 	.equ	OUTPORT_INIT_VAL, 0           ; Valor inicial do porto de saida
 
 	; Definicoes do circuito pTC
-	.equ	PTC_ADDRESS,  0xFF40          ; Endereco do circuito pTC
+	.equ	PTC_ADDRESS,  0xff40          ; Endereco do circuito pTC
 
 	.equ	PTC_TCR, 0                    ; Deslocamento do registo TCR do pTC
 	.equ	PTC_TMR, 2                    ; Deslocamento do registo TMR do pTC
@@ -28,11 +25,11 @@
 
 	.equ	SYSCLK_FREQ, 0x63             ; Intervalo de contagem do circuito pTC
                                           ; que suporta a implementação do sysclk
-word
-	; Outras Wdefinicoes
-	.equ	LED0_MASK, 1                  ; Mascara para o LED O0 da placa SDP16
 
-	.equ	BLINK_TIME, 250               ; 
+	.equ ENABLE_BIT_MASK, 0x80		; bit para começar a roletta
+	.equ INITIAL_MASK, 0x1			; bit inicial da mascara da roletta
+	.equ MASK_MAX_VALUE, 0x80		; bit maximo para a roletta
+	.equ SPEED_MASK, 0x7			; mascara de bits que definem a velocidade
 
 ; Seccao:    .startup
 ; Descricao: Guarda o código de arranque do sistema
@@ -60,7 +57,7 @@ isr_addr:
 ; Descricao: System clock
 ; Entradas:  -
 ; Saidas:    -
-; Efeitos:   r0 r1
+; Efeitos:   r0, r1
 main:
 	mov	r0, #OUTPORT_INIT_VAL
 	bl	outport_init
@@ -70,33 +67,107 @@ main:
 	mov	r1, #CPSR_BIT_I
 	orr	r0, r0, r1
 	msr	cpsr, r0
+
+	; meter mask a initial mask
+	ldr r0, roulette_mask_addr
+	mov r1, #INITIAL_MASK
+	strb r1, [r0, #0]
+
+reset_and_loop:
+	mov r0, #OUTPORT_INIT_VAL
+	bl outport_write
+
 main_loop:
-	mov	r0, #LED0_MASK
-	bl	outport_set_bits
-	mov	r0, #BLINK_TIME
-	bl	delay
-	mov	r0, #LED0_MASK
-	bl	outport_clear_bits
-	mov	r0, #BLINK_TIME
-	bl	delay
-	b	main_loop
+	bl inport_read
+	mov r1, #ENABLE_BIT_MASK
+	mov r2, #0
+	and r0, r0, r1
+	cmp r0, r2 	; if (enable_bit == 0)
+	beq reset_and_loop ; continue
+
+	ldr r0, roulette_mask_addr
+	ldrb r0, [r0, #0]
+	bl outport_write ; ativa os bits da mascara
+
+	bl inport_read
+	mov r1, #SPEED_MASK
+	and r0, r0, r1 ; r0 = r0 & 0b111
+	bl multiply ; r0 = speed
+	;bl multiply ; "FITA COLA"
+	;bl multiply ; "FITA COLA"
+	bl delay ; dormir speed ms
+
+	; shiftar mascara
+	ldr r0, roulette_mask_addr
+	ldrb r0, [r0, #0]
+	mov r3, #MASK_MAX_VALUE
+	cmp r0, r3
+	bne if_not_equal
+if_equal:
+	mov r0, #INITIAL_MASK
+	b shift_mask_end
+if_not_equal:
+	lsl r0, r0, #1
+shift_mask_end:
+	ldr r1, roulette_mask_addr
+	strb r0, [r1, #0]
+
+	bl inport_read
+	mov r1, #SPEED_MASK
+	and r0, r0, r1
+	bl multiply ; r0 = speed
+	;bl multiply ; "FITA COLA"
+	;bl multiply ; "FITA COLA"
+	bl delay ; dormir speed ms
+
+	b main_loop
+
+
+roulette_mask_addr:
+	.word roulette_mask
+
+; Rotina:    multiply
+; Descricao: Multiplica o valor de r0
+; Entradas:  r0 = n
+; Saidas:    r0 = n*5
+; Efeitos:  (r0+1)*5
+multiply:
+	mov r1, #0
+	add r0, r0, #1
+loop_multiply:
+	add r1, r1, #5
+	sub r0, r0, #1 
+	bne	loop_multiply
+    mov r0, r1
+	mov pc, lr
+
 
 ; Rotina:    delay
 ; Descricao: Rotina bloqueante que realiza uma espera ativa por teste sucessivo
-;            do valor da variável global sys_clock. O tempo a esperar, em
+;            do valor da variável global sysclk. O tempo a esperar, em
 ;            centenas de milissegundos, e passado em R0.
 ;            Interface exemplo: void delay( uint16_t hms );
 ; Entradas:  r0 = hms, tempo para dar delay
 ; Saidas:    -
-; Efeitos:   - r0
+; Efeitos:   -
 delay:
-	and r0, r0, r0
-	bzs delay_end
+	push lr	
+	push r4 				; r4 = hms (5, 10, 20...)
+	mov r4, r0				; salvar r0 em r4
+	ldr r1, sysclk_addr
+	mov r2, #0
+	str r2, [r1, #0] 
+	bl sysclk_get_ticks
+	mov r3, r0 				; r3 = valor inicial do sysclk
 delay_loop:
-	sub r0, r0, #1
-	bzc delay_loop
-delay_end:
-	mov pc, lr
+	bl sysclk_get_ticks		; r0 = valor atual do sysclk
+	sub r0, r0, r3
+	cmp r0, r4
+	bge end_loop
+	b delay_loop
+end_loop:
+	pop r4
+	pop pc
 
 ; Rotina:    sysclk_get_ticks
 ; Descricao: Devolve o valor corrente da variável global sysclk.
@@ -109,22 +180,25 @@ sysclk_get_ticks:
 	ldr	r0, [r0, #0]
 	mov	pc, lr
 
+
+
 ; Rotina:    isr
 ; Descricao: Incrementa o valor da variável global sysclk.
+; Entradas:  -
+; Saidas:    -
 ; Efeitos:   r0 e r1
 isr:
     push    r0
     push    r1
 
-	; limpar PTC TIR
-    ldr r0, PTC_ADDR
-	strb r0, [r0, #PTC_TIR]
+    ldr 	r0, PTC_ADDR
+	strb 	r0, [r0, #PTC_TIR]
 
     ldr    r0, sysclk_addr
     ldr    r1, [r0, #0]
     add    r1, r1, #1
     str    r1, [r0, #0]
-
+	
 	pop    r1
     pop    r0
     movs    pc, lr
@@ -294,6 +368,9 @@ outport_img:
 
 sysclk:
 	.space	2
+
+roulette_mask:
+	.space 1
 
 ; Seccao:    .stack
 ; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
