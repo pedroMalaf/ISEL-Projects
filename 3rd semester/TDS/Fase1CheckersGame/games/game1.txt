@@ -1,0 +1,1 @@
+game1 # w # RUN b | 4b:b 4d:b 2b:w 1c:w
