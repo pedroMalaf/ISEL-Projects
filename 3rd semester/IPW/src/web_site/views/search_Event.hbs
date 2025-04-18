@@ -1,0 +1,16 @@
+<form id="eventForm">
+    <label for="eventName">Search Events:</label>
+    <input type="text" id="eventName" name="name" placeholder="Enter event name...">
+    <button type="submit">Search</button>
+</form>
+ <script>
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            const eventName = document.getElementById('eventName').value;
+
+            // Redirect to the /site/events/:name path with the submitted event name
+            window.location.href = `/site/events/${eventName}`;
+        });
+    </script>
+</div>

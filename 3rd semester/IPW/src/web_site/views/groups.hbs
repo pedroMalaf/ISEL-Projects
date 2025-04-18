@@ -1,0 +1,9 @@
+<h1>All Groups</h1>
+<section class="container">
+    {{#each groups}}
+        <div class="card mb-3">
+            {{> group this}}
+        </div>
+        <hr>
+    {{/each}}
+</section>

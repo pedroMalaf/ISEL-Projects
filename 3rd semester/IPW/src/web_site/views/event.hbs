@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Other meta tags, stylesheets, etc. -->
+    <style>
+        /* Custom styles if needed */
+        .event-title {
+            text-align: center;
+        }
+        .event-img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{{title}}</h2>
+        <div class="row">
+            {{#each events}}
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="event-title">{{name}}</h3>
+                            <img src="{{image}}" class="event-img" width="250" height="200" alt="">
+                            <p>Date: {{date}}</p>
+                            <p>Segment: {{segment}}</p>
+                            <p>Genre: {{genre}}</p>
+                            <p>SubGenre: {{subGenre}}</p>
+                            <p>Sales: {{saleStart}} -- {{saleEnd}}</p>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery (optional, for some functionalities) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Your additional scripts -->
+</body>
+</html>

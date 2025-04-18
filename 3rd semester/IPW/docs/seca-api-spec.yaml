@@ -1,0 +1,315 @@
+openapi: 3.0.1
+info:
+  title: SECA API
+  description: This is a simple shows and events API 
+  contact:
+    email: owner@mail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - description: Localhost server for testing API
+    url: http://localhost:1906
+
+security:
+  - bearerAuth: []
+tags:
+- name: Events
+- name: Users
+- name: Groups
+paths:
+  /popularevents:
+   get:
+  tags:
+    - Events
+  summary: Get popular events
+  operationId: getPopularEvents
+  parameters:
+    - name: s
+      in: query
+      description: Number of events to retrieve (default 30)
+      required: false
+      schema:
+        type: integer
+    - name: p
+      in: query
+      description: Page number (default 1)
+      required: false
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                id:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+                segment:
+                  type: string
+                genre:
+                  type: string
+        '400':
+      $ref: "#/components/responses/400BadRequest"
+
+  /events/:name:
+    get:
+      tags:
+        - Events
+      summary: Search events by name
+      operationId: getEventsByName
+      parameters:
+        - name: name
+          in: query
+          description: Name to search for in events
+          schema:
+            type: string
+          required: true
+        - name: s
+          in: query
+          description: Number of events to return (default 30)
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - name: p
+          in: query
+          description: Page number (default 1)
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+      responses:
+        200:
+          description: List of events matching the search criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        400:
+          $ref: "#/components/responses/400BadRequest"
+
+  /groups:
+    get:
+      tags:
+        - Groups
+      summary: List all groups
+      operationId: getAllGroups
+      security:
+        - BearerAuth: []  
+      responses:
+        200:
+          description: List of all event groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventGroup'
+        400:
+          $ref: "#/components/responses/400BadRequest"
+
+    post:
+      tags:
+        - Groups
+      summary: Create group
+      operationId: createGroup
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Details for creating a new event group
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGroup'
+        responses:
+          201:
+          description: Event group created successfully
+          content:
+           application/json:
+             schema:
+              $ref: '#/components/schemas/Group'
+          400:
+            $ref: "#/components/responses/400BadRequest"
+  groups/{groupId}:
+    get:
+      tags:
+        - Groups
+      summary: Get details of a group
+      operationId: getGroup
+       parameters:
+        - name: groupId
+          in: path
+          description: ID of the group to fetch 
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: success in fetching the group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+         $ref: "#/components/responses/401Unauthorized"
+        404:
+          $ref: "#/components/responses/404NotFound"
+
+    put:
+      tags:
+        - Groups
+      summary: Edit group
+      operationId: updateGroup
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of the group to be edited
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Updated details for the event group
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEventGroup'
+      responses:
+        200:
+          description: Event group updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventGroup'
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        404:
+          $ref: "#/components/responses/404NotFound"
+
+    delete:
+      tags:
+        - Groups
+      summary: Delete a group
+      operationId: deleteGroup
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of the group to be deleted
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Event group deleted successfully
+          content: {}
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        404:
+          $ref: "#/components/responses/404NotFound"
+  groups/{groupId}/events:
+   post:
+      tags:
+        - Groups
+      summary: Add an event to a group
+      operationId: addEventToGroup
+      security:
+      - BearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of the group to add event
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        description: Details of the event to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEvent'
+        required: true
+      responses:
+        201:
+          description: Event added to the group successfully
+          content: {}
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+         $ref: "#/components/responses/401Unauthorized"
+        404:
+          $ref: "#/components/responses/404NotFound"
+  groups/{groupId}/events/{eventID}:      
+    delete:
+      tags:
+        - Groups
+      summary: Remove an event from a group
+      operationId: deleteEventFromGroup
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of the group to remove event
+          schema:
+            type: integer
+          required: true
+        - name: eventId
+          in: query
+          description: ID of the event to remove from the group
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Event removed from the group successfully
+          content: {}
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+         $ref: "#/components/responses/401Unauthorized"
+        404:
+          $ref: "#/components/responses/404NotFound"
+
+  /users:
+     post:
+      tags:
+        - Users
+      summary: Create new user
+      operationId: createUser
+      requestBody:
+        description: Details for creating a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+        required: true
+      responses:
+        201:
+          description: User added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: user
+        400:
+          $ref: "#/components/responses/400BadRequest"
+              

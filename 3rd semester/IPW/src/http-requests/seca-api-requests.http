@@ -1,0 +1,61 @@
+@token = b2f7f962-e384-4cb0-b658-59705dbc668c
+
+### Gets the most popular events 
+GET http://localhost:1906/popularevents?s=2&p=0
+
+### Gets an event by its name
+GET http://localhost:1906/events/kjkjkjkj?s=10&p=1
+
+### Gets all the groups
+GET http://localhost:1906/groups
+Authorization: Bearer {{token}}
+
+### Gets a group by its ID 
+GET http://localhost:1906/groups/hsadihu
+Authorization: Bearer {{token}}
+
+### Creates a new group 
+POST http://localhost:1906/groups
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "n": "Futebol",
+    "d": "Grupo de jogos de futebol"
+}
+
+### Edits a group 
+PUT http://localhost:1906/groups/XZdNeYwBdI6M8CRWr9k1
+Authorization: Bearer {{token}}
+Content-Type: application/json 
+
+{
+    "n": "Jogos de futebol",
+    "d": "Grupo de futebol"
+}
+
+### Adds an event to a group
+POST http://localhost:1906/groups/XJcOeYwBdI6M8CRWdtns/events
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "n": "chicago bulls"
+}
+
+### Delets a group 
+DELETE http://localhost:1906/groups/XZdNeYwBdI6M8CRWr9k1
+Authorization: Bearer {{token}}
+
+### Delets an event from a group
+DELETE http://localhost:1906/groups/XJcOeYwBdI6M8CRWdtns/events/Z7r9jZ1AdJ9ua
+Authorization: Bearer {{token}}
+
+### Creates a new user
+POST http://localhost:1906/user
+Content-Type: application/json
+
+{
+    "name": "asdf"
+}
+

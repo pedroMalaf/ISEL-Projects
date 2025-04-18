@@ -1,0 +1,29 @@
+<section>
+    <p>Group name:{{name}}</p>
+    <p>Group description:{{description}}</p>
+    <p>Events:<ul>
+            {{#each events}}
+                <p><img src={{image}} width="60" height="80" alt=""></p>
+                <form method="POST"  action="/site/groups/{{../id}}/events/{{id}}" >
+                <input type="submit" value="Delete">
+                </form>
+                <p> Name: {{name}}</p>
+                <p> On sale: {{saleStart}}-{{saleEnd}}</p> 
+                <p> Date: {{date}}</p> 
+                <p> Segment: {{segment}}</p> 
+                <p> Genre: {{genre}}</p> 
+                <p> SubGenre: {{subGenre}}</p> 
+                <p> Date: {{date}}</p> 
+            {{/each}}
+        </ul>
+    <form method="GET" action="auth/site/groups/{{id}}/update">
+        <input type="submit" value="Edit">
+    </form>
+    <form method="POST" action="auth/site/groups/{{id}}/delete">
+        <input type="submit" value="Delete">
+    </form>
+   <form method="POST" action="auth/site/groups/{{id}}/events">
+    <p>Event name: <input type="text" value="{{event.n}}" name="n"></p>
+    <input type="submit" value="{{btnAction}}Add">
+</form>
+</section>

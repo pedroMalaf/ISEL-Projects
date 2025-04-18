@@ -1,0 +1,35 @@
+{
+  "name": "seca-ipw-p1-leic2324i-ipw31d-g06",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node src/seca-server.mjs",
+    "start-dev": "nodemon src/seca-server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isel-leic-ipw/seca-ipw-p1-leic2324i-ipw31d-g06.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/isel-leic-ipw/seca-ipw-p1-leic2324i-ipw31d-g06/issues"
+  },
+  "homepage": "https://github.com/isel-leic-ipw/seca-ipw-p1-leic2324i-ipw31d-g06#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "hbs": "^4.2.0",
+    "mocha": "^10.2.0",
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.0.1",
+    "passport": "^0.7.0",
+    "swagger-ui-express": "^5.0.0",
+    "yamljs": "^0.3.0"
+  }
+}

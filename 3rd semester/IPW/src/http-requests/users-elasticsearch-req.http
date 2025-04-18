@@ -1,0 +1,5 @@
+### USERS ELASTICSEARCH
+DELETE http://localhost:9200/users
+
+###
+GET http://localhost:9200/users/_search

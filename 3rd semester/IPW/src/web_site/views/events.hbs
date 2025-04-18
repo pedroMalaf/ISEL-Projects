@@ -1,0 +1,13 @@
+<div class="container">
+        <h1>Popular Events</h1>
+        <ul class="list-group">
+            {{#each events}}
+                <li class="list-group-item">
+                    <h5 class="mb-1">Event: {{name}}</h5>
+                    <p class="mb-1">Date: {{date}}</p>
+                    <p class="mb-1">Segment: {{segment}}</p>
+                    <p class="mb-1">Genre: {{genre}}</p>
+                </li>
+            {{/each}}
+        </ul>
+    </div>

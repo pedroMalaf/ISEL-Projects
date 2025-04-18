@@ -1,0 +1,10 @@
+### GROUPS ELASTICSEARCH
+
+DELETE http://localhost:9200/groups
+
+###
+GET http://localhost:9200/groups
+
+### 
+
+PUT http://localhost:9200/groups

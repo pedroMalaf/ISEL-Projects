@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <!-- Navbar content -->
+  <a class="navbar-brand" href="/">SECA</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Your custom navbar links -->
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/site/popularevents">Popular Events</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/auth/site/groups/create">Create Group</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/site/search">Search for an event</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/auth/site/groups">My Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li>
+         <li class="nav-item">
+        <a class="nav-link" href="/users">Sign Up</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Include logout partial or content -->
+  {{> logout}}
+</nav>
